@@ -15,9 +15,9 @@ public class Building : NetworkBehaviour
     public GameObject Preview => _preview;
 
     public static event UnityAction<Building> ServerBuildingSpawned;
-    public static event UnityAction<Building> ServerBuildingDespawned;
+    public static event UnityAction<Building> ServerBuildingDisposed;
     public static event UnityAction<Building> AuthorityBuildingSpawned;
-    public static event UnityAction<Building> AuthorityBuildingDespawned;
+    public static event UnityAction<Building> AuthorityBuildingDisposedd;
 
     public override void OnStartServer()
     {
@@ -26,7 +26,7 @@ public class Building : NetworkBehaviour
 
     public override void OnStopServer()
     {
-        ServerBuildingDespawned?.Invoke(this);
+        ServerBuildingDisposed?.Invoke(this);
     }
 
     public override void OnStartAuthority()
@@ -39,6 +39,6 @@ public class Building : NetworkBehaviour
         if (!isOwned)
             return;
 
-        AuthorityBuildingDespawned?.Invoke(this);
+        AuthorityBuildingDisposedd?.Invoke(this);
     }
 }

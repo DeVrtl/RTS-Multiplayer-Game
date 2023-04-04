@@ -14,12 +14,12 @@ public class Health : NetworkBehaviour
     public override void OnStartServer()
     {
         _current = _max;
-        UnitBase.ServerPlayerDied += OnServerPlayerDied;
+        Headquarters.ServerPlayerDied += OnServerPlayerDied;
     }
 
     public override void OnStopServer()
     {
-        UnitBase.ServerPlayerDied -= OnServerPlayerDied;
+        Headquarters.ServerPlayerDied -= OnServerPlayerDied;
     }
 
     [Server]
@@ -28,7 +28,7 @@ public class Health : NetworkBehaviour
         if (_current == 0)
             return;
 
-        _current = Mathf.Max(_current - damage, 0);
+        _current = Mathf.Clamp(_current - damage, 0, _max);
 
         if (_current != 0)
             return;

@@ -9,7 +9,7 @@ public class UnitSelectionHandler : MonoBehaviour
     [SerializeField] private LayerMask _mask;
 
     private Vector2 _startPosition;
-    private Player _player;
+    private PlayerUnitsRepository _playerUnitsRepository;
     private Camera _main;
 
     public List<Unit> SelectedUnits { get; private set; } = new List<Unit>();
@@ -18,15 +18,15 @@ public class UnitSelectionHandler : MonoBehaviour
     {
         _main = Camera.main;
 
-        Unit.AuthorityUnitDespawned += OnAuthorityUnitDespawned;
+        Unit.AuthorityUnitDisposed += OnAuthorityUnitDisposed;
         GameOverHandler.ClientGameOvered += OnClientGameOverd;
 
-        _player = NetworkClient.connection.identity.GetComponent<Player>();
+        _playerUnitsRepository = NetworkClient.connection.identity.GetComponent<PlayerUnitsRepository>();
     }
 
     private void OnDestroy()
     {
-        Unit.AuthorityUnitDespawned -= OnAuthorityUnitDespawned;
+        Unit.AuthorityUnitDisposed -= OnAuthorityUnitDisposed;
         GameOverHandler.ClientGameOvered -= OnClientGameOverd;
     }
 
@@ -104,7 +104,7 @@ public class UnitSelectionHandler : MonoBehaviour
         Vector2 min = _unitSelectionArea.anchoredPosition - (_unitSelectionArea.sizeDelta / 2);
         Vector2 max = _unitSelectionArea.anchoredPosition + (_unitSelectionArea.sizeDelta / 2);
 
-        foreach(Unit unit in _player.MyUnits)
+        foreach(Unit unit in _playerUnitsRepository.MyUnits)
         {
             if (SelectedUnits.Contains(unit))
                 continue;
@@ -119,7 +119,7 @@ public class UnitSelectionHandler : MonoBehaviour
         }
     }
 
-    private void OnAuthorityUnitDespawned(Unit unit)
+    private void OnAuthorityUnitDisposed(Unit unit)
     {
         SelectedUnits.Remove(unit);
     }

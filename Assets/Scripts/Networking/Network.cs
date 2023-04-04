@@ -1,13 +1,11 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using Mirror;
 using System.Collections.Generic;
 
 public class Network : NetworkManager
 {
-    [SerializeField] private UnitBase _base;
-    [SerializeField] private GameOverHandler _gameOverHandler;
+    [SerializeField] private SessionInitializer _session;
 
     private bool _isGameInProgress = false;
 
@@ -82,20 +80,21 @@ public class Network : NetworkManager
         ServerChangeScene("Map_01");
     }
 
-    public override void OnServerSceneChanged(string sceneName)
+    public override void OnServerSceneChanged(string sceneName) //пренести всё что ниже в класс SessionInitializer
     {
-        if (SceneManager.GetActiveScene().name.StartsWith("Map"))
-        {
-            GameOverHandler gameOverHandler = Instantiate(_gameOverHandler);
-
-            NetworkServer.Spawn(gameOverHandler.gameObject);
-
-            foreach(Player player in Players)
-            {
-                UnitBase unitBase = Instantiate(_base, GetStartPosition().position, Quaternion.identity);
-
-                NetworkServer.Spawn(unitBase.gameObject, player.connectionToClient);
-            }
-        }
+        _session.Initialize(Players, this);
     }
 }
+        //if (SceneManager.GetActiveScene().name.StartsWith("Map"))
+        //{
+        //    GameOverHandler gameOverHandler = Instantiate(_gameOverHandler);
+
+        //    NetworkServer.Spawn(gameOverHandler.gameObject);
+
+        //    foreach(Player player in Players)
+        //    {
+        //        Headquarters unitBase = Instantiate(_base, GetStartPosition().position, Quaternion.identity);
+
+        //        NetworkServer.Spawn(unitBase.gameObject, player.connectionToClient);
+        //    }
+        //}

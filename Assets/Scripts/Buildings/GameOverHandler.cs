@@ -5,31 +5,31 @@ using UnityEngine.Events;
 
 public class GameOverHandler : NetworkBehaviour
 {
-    private List<UnitBase> _bases = new List<UnitBase>();
+    private List<Headquarters> _bases = new List<Headquarters>();
 
     public static event UnityAction<string> ClientGameOvered;
     public static event UnityAction ServerGameOvered;
 
     public override void OnStartServer()
     {
-        UnitBase.ServerBaseSpawned += OnServerBaseSpawned;
-        UnitBase.ServerBaseDespawned += OnServerBaseDespawned;
+        Headquarters.ServerBaseSpawned += OnServerBaseSpawned;
+        Headquarters.ServerBaseDisposed += OnServerBaseDisposed;
     }
 
     public override void OnStopServer()
     {
-        UnitBase.ServerBaseSpawned -= OnServerBaseSpawned;
-        UnitBase.ServerBaseDespawned -= OnServerBaseDespawned;
+        Headquarters.ServerBaseSpawned -= OnServerBaseSpawned;
+        Headquarters.ServerBaseDisposed -= OnServerBaseDisposed;
     }
 
     [Server]
-    private void OnServerBaseSpawned(UnitBase unitBase)
+    private void OnServerBaseSpawned(Headquarters unitBase)
     {
         _bases.Add(unitBase);
     }
 
     [Server]
-    private void OnServerBaseDespawned(UnitBase unitBase)
+    private void OnServerBaseDisposed(Headquarters unitBase)
     {
         _bases.Remove(unitBase);
 

@@ -16,9 +16,9 @@ public class Unit : NetworkBehaviour
     public int Cost => _cost;
 
     public static event UnityAction<Unit> ServerUnitSpawned;
-    public static event UnityAction<Unit> ServerUnitDespawned;
+    public static event UnityAction<Unit> ServerUnitDisposed;
     public static event UnityAction<Unit> AuthorityUnitSpawned;
-    public static event UnityAction<Unit> AuthorityUnitDespawned; 
+    public static event UnityAction<Unit> AuthorityUnitDisposed; 
 
     public override void OnStartServer()
     {
@@ -28,7 +28,7 @@ public class Unit : NetworkBehaviour
 
     public override void OnStopServer()
     {
-        ServerUnitDespawned?.Invoke(this);
+        ServerUnitDisposed?.Invoke(this);
         _heatlh.ServerDied += OnServerDied;
     }
 
@@ -42,7 +42,7 @@ public class Unit : NetworkBehaviour
         if (!isOwned)
             return;
 
-        AuthorityUnitDespawned?.Invoke(this);
+        AuthorityUnitDisposed?.Invoke(this);
     }
 
     [Client]
