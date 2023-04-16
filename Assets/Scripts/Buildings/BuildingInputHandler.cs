@@ -26,7 +26,7 @@ public class BuildingInputHandler : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, mask))
         {
-            playerBuildings.CmdTryPlaceBuilding(building.Id, hit.point);
+            playerBuildings.CmdTryPlaceBuilding(building.ID, hit.point);
         }
 
         Destroy(buildingPreview);

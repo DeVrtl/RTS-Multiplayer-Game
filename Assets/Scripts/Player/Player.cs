@@ -4,8 +4,8 @@ using UnityEngine.Events;
 
 public class Player : NetworkBehaviour
 {
-    [SerializeField] private PlayerUnitsRepository _unitsRepository;
-    [SerializeField] private PlayerBuildingsRepository _buildingsRepository;
+    [SerializeField] private UnitsRepositorySyncer _unitsRepositorySyncer;
+    [SerializeField] private BuildingsRepositorySyncer _buildingsRepositorySyncer;
     [SerializeField] private Transform _camera;
 
     [SyncVar(hook = nameof(ClientHandleResourcesUpdated))] private int _resources = 500;
@@ -27,20 +27,20 @@ public class Player : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        Unit.ServerUnitSpawned += OnServerUnitSpawned;
-        Unit.ServerUnitDisposed += OnServerUnitDisposed;
-        Building.ServerBuildingSpawned += OnServerBuildingSpawned;
-        Building.ServerBuildingDisposed += OnServerBuildingDisposed;
+        Unit.ServerUnitSpawned += _unitsRepositorySyncer.OnServerUnitSpawned;
+        Unit.ServerUnitDisposed += _unitsRepositorySyncer.OnServerUnitDisposed;
+        Building.ServerBuildingSpawned += _buildingsRepositorySyncer.OnServerBuildingSpawned;
+        Building.ServerBuildingDisposed += _buildingsRepositorySyncer.OnServerBuildingDisposed;
 
         DontDestroyOnLoad(gameObject);
     }
 
     public override void OnStopServer()
     {
-        Unit.ServerUnitSpawned -= OnServerUnitSpawned;
-        Unit.ServerUnitDisposed -= OnServerUnitDisposed;
-        Building.ServerBuildingSpawned -= OnServerBuildingSpawned;
-        Building.ServerBuildingDisposed -= OnServerBuildingDisposed;
+        Unit.ServerUnitSpawned -= _unitsRepositorySyncer.OnServerUnitSpawned;
+        Unit.ServerUnitDisposed -= _unitsRepositorySyncer.OnServerUnitDisposed;
+        Building.ServerBuildingSpawned -= _buildingsRepositorySyncer.OnServerBuildingSpawned;
+        Building.ServerBuildingDisposed -= _buildingsRepositorySyncer.OnServerBuildingDisposed;
     }
 
     public override void OnStartAuthority()
@@ -48,10 +48,10 @@ public class Player : NetworkBehaviour
         if (NetworkServer.active)
             return;
 
-        Unit.AuthorityUnitSpawned += OnAuthorityUnitSpawned;
-        Unit.AuthorityUnitDisposed += OnAuthorityUnitDisposed;
-        Building.AuthorityBuildingSpawned += OnAuthorityBuildingSpawned;
-        Building.AuthorityBuildingDisposedd += OnAuthorityBuildingDisposed;
+        Unit.AuthorityUnitSpawned += _unitsRepositorySyncer.OnAuthorityUnitSpawned;
+        Unit.AuthorityUnitDisposed += _unitsRepositorySyncer.OnAuthorityUnitDisposed;
+        Building.AuthorityBuildingSpawned += _buildingsRepositorySyncer.OnAuthorityBuildingSpawned;
+        Building.AuthorityBuildingDisposedd += _buildingsRepositorySyncer.OnAuthorityBuildingDisposed;
     }
 
     public override void OnStartClient()
@@ -76,10 +76,10 @@ public class Player : NetworkBehaviour
         if (!isOwned)
             return;
 
-        Unit.AuthorityUnitSpawned -= OnAuthorityUnitSpawned;
-        Unit.AuthorityUnitDisposed -= OnAuthorityUnitDisposed;
-        Building.AuthorityBuildingSpawned -= OnAuthorityBuildingSpawned;
-        Building.AuthorityBuildingDisposedd -= OnAuthorityBuildingDisposed;
+        Unit.AuthorityUnitSpawned -= _unitsRepositorySyncer.OnAuthorityUnitSpawned;
+        Unit.AuthorityUnitDisposed -= _unitsRepositorySyncer.OnAuthorityUnitDisposed;
+        Building.AuthorityBuildingSpawned -= _buildingsRepositorySyncer.OnAuthorityBuildingSpawned;
+        Building.AuthorityBuildingDisposedd -= _buildingsRepositorySyncer.OnAuthorityBuildingDisposed;
     }
 
     [Server]
@@ -113,58 +113,6 @@ public class Player : NetworkBehaviour
             return;
 
         ((Network)NetworkManager.singleton).StartGame();
-    }
-
-    private void OnServerUnitSpawned(Unit unit) 
-    {
-        if (unit.connectionToClient.connectionId != connectionToClient.connectionId)
-            return;
-
-        _unitsRepository.MyUnits.Add(unit);
-    }
-
-    private void OnServerUnitDisposed(Unit unit) 
-    {
-        if (unit.connectionToClient.connectionId != connectionToClient.connectionId)
-            return;
-
-        _unitsRepository.MyUnits.Remove(unit);
-    }
-
-    private void OnAuthorityUnitSpawned(Unit unit) 
-    {
-        _unitsRepository.MyUnits.Add(unit);
-    }
-
-    private void OnAuthorityUnitDisposed(Unit unit) 
-    {
-        _unitsRepository.MyUnits.Remove(unit);
-    }
-
-    private void OnServerBuildingSpawned(Building building)
-    {
-        if (building.connectionToClient.connectionId != connectionToClient.connectionId)
-            return;
-
-        _buildingsRepository.MyBuildings.Add(building);
-    }
-
-    private void OnServerBuildingDisposed(Building building)
-    {
-        if (building.connectionToClient.connectionId != connectionToClient.connectionId)
-            return;
-
-        _buildingsRepository.MyBuildings.Remove(building);
-    }
-
-    private void OnAuthorityBuildingSpawned(Building building)
-    {
-        _buildingsRepository.MyBuildings.Add(building);
-    }
-
-    private void OnAuthorityBuildingDisposed(Building building)
-    {
-        _buildingsRepository.MyBuildings.Remove(building);
     }
 
     private void OnAuthorityPartyOwnerStateUpdated(bool oldState, bool newState) 

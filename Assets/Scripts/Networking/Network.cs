@@ -80,21 +80,8 @@ public class Network : NetworkManager
         ServerChangeScene("Map_01");
     }
 
-    public override void OnServerSceneChanged(string sceneName) //пренести всё что ниже в класс SessionInitializer
+    public override void OnServerSceneChanged(string sceneName) 
     {
         _session.Initialize(Players, this);
     }
 }
-        //if (SceneManager.GetActiveScene().name.StartsWith("Map"))
-        //{
-        //    GameOverHandler gameOverHandler = Instantiate(_gameOverHandler);
-
-        //    NetworkServer.Spawn(gameOverHandler.gameObject);
-
-        //    foreach(Player player in Players)
-        //    {
-        //        Headquarters unitBase = Instantiate(_base, GetStartPosition().position, Quaternion.identity);
-
-        //        NetworkServer.Spawn(unitBase.gameObject, player.connectionToClient);
-        //    }
-        //}

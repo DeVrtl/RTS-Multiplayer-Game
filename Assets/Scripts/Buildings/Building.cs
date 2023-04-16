@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
@@ -6,11 +7,11 @@ public class Building : NetworkBehaviour
 {
     [SerializeField] private GameObject _preview;
     [SerializeField] private Sprite _icon;
-    [SerializeField] private int _id = -1;
+
     [SerializeField] private int _price;
 
+    public Guid ID { get; private set; } = Guid.NewGuid();
     public Sprite Icon  => _icon;
-    public int Id => _id;
     public int Price => _price;
     public GameObject Preview => _preview;
 

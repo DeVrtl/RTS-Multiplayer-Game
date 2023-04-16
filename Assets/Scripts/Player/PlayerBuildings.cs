@@ -1,3 +1,4 @@
+using System;
 using Mirror;
 using UnityEngine;
 
@@ -26,13 +27,13 @@ public class PlayerBuildings : NetworkBehaviour
     }
 
     [Command]
-    public void CmdTryPlaceBuilding(int buildingId, Vector3 position)
+    public void CmdTryPlaceBuilding(Guid buildingID, Vector3 position)
     {
         Building buildingToPlace = null;
 
         foreach (Building building in _buildings)
         {
-            if (building.Id == buildingId)
+            if (building.ID == buildingID)
             {
                 buildingToPlace = building;
                 break;
