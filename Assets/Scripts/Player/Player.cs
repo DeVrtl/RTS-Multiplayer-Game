@@ -27,20 +27,16 @@ public class Player : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        Unit.ServerUnitSpawned += _unitsRepositorySyncer.OnServerUnitSpawned;
-        Unit.ServerUnitDisposed += _unitsRepositorySyncer.OnServerUnitDisposed;
-        Building.ServerBuildingSpawned += _buildingsRepositorySyncer.OnServerBuildingSpawned;
-        Building.ServerBuildingDisposed += _buildingsRepositorySyncer.OnServerBuildingDisposed;
+        _unitsRepositorySyncer.SubscribeOnServerEvents();
+        _buildingsRepositorySyncer.SubscribeOnServerEvents();
 
         DontDestroyOnLoad(gameObject);
     }
 
     public override void OnStopServer()
     {
-        Unit.ServerUnitSpawned -= _unitsRepositorySyncer.OnServerUnitSpawned;
-        Unit.ServerUnitDisposed -= _unitsRepositorySyncer.OnServerUnitDisposed;
-        Building.ServerBuildingSpawned -= _buildingsRepositorySyncer.OnServerBuildingSpawned;
-        Building.ServerBuildingDisposed -= _buildingsRepositorySyncer.OnServerBuildingDisposed;
+        _unitsRepositorySyncer.UnsubscribeOnServerEvents();
+        _buildingsRepositorySyncer.UnsubscribeOnServerEvents();
     }
 
     public override void OnStartAuthority()
@@ -48,10 +44,8 @@ public class Player : NetworkBehaviour
         if (NetworkServer.active)
             return;
 
-        Unit.AuthorityUnitSpawned += _unitsRepositorySyncer.OnAuthorityUnitSpawned;
-        Unit.AuthorityUnitDisposed += _unitsRepositorySyncer.OnAuthorityUnitDisposed;
-        Building.AuthorityBuildingSpawned += _buildingsRepositorySyncer.OnAuthorityBuildingSpawned;
-        Building.AuthorityBuildingDisposedd += _buildingsRepositorySyncer.OnAuthorityBuildingDisposed;
+        _unitsRepositorySyncer.SubscribeOnAuthorityEvents();
+        _buildingsRepositorySyncer.SubscribeOnAuthorityEvents();
     }
 
     public override void OnStartClient()
@@ -76,10 +70,8 @@ public class Player : NetworkBehaviour
         if (!isOwned)
             return;
 
-        Unit.AuthorityUnitSpawned -= _unitsRepositorySyncer.OnAuthorityUnitSpawned;
-        Unit.AuthorityUnitDisposed -= _unitsRepositorySyncer.OnAuthorityUnitDisposed;
-        Building.AuthorityBuildingSpawned -= _buildingsRepositorySyncer.OnAuthorityBuildingSpawned;
-        Building.AuthorityBuildingDisposedd -= _buildingsRepositorySyncer.OnAuthorityBuildingDisposed;
+        _unitsRepositorySyncer.UnsubscribeOnAuthorityEvents();
+        _buildingsRepositorySyncer.UnsubscribeOnAuthorityEvents();
     }
 
     [Server]

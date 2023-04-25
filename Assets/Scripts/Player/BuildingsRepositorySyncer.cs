@@ -5,7 +5,31 @@ public class BuildingsRepositorySyncer : NetworkBehaviour
 {
     [SerializeField] private PlayerBuildingsRepository _buildingsRepository;
 
-    public void OnServerBuildingSpawned(Building building)
+    public void SubscribeOnServerEvents()
+    {
+        Building.ServerBuildingSpawned += OnServerBuildingSpawned;
+        Building.ServerBuildingDisposed += OnServerBuildingDisposed;
+    }
+
+    public void SubscribeOnAuthorityEvents()
+    {
+        Building.AuthorityBuildingSpawned += OnAuthorityBuildingSpawned;
+        Building.AuthorityBuildingDisposedd += OnAuthorityBuildingDisposed;
+    }
+
+    public void UnsubscribeOnServerEvents()
+    {
+        Building.ServerBuildingSpawned -= OnServerBuildingSpawned;
+        Building.ServerBuildingDisposed -= OnServerBuildingDisposed;
+    }
+
+    public void UnsubscribeOnAuthorityEvents()
+    {
+        Building.AuthorityBuildingSpawned -= OnAuthorityBuildingSpawned;
+        Building.AuthorityBuildingDisposedd -= OnAuthorityBuildingDisposed;
+    }
+
+    private void OnServerBuildingSpawned(Building building)
     {
         if (building.connectionToClient.connectionId != connectionToClient.connectionId)
             return;
@@ -13,7 +37,7 @@ public class BuildingsRepositorySyncer : NetworkBehaviour
         _buildingsRepository.MyBuildings.Add(building);
     }
 
-    public void OnServerBuildingDisposed(Building building)
+    private void OnServerBuildingDisposed(Building building)
     {
         if (building.connectionToClient.connectionId != connectionToClient.connectionId)
             return;
@@ -21,12 +45,12 @@ public class BuildingsRepositorySyncer : NetworkBehaviour
         _buildingsRepository.MyBuildings.Remove(building);
     }
 
-    public void OnAuthorityBuildingSpawned(Building building)
+    private void OnAuthorityBuildingSpawned(Building building)
     {
         _buildingsRepository.MyBuildings.Add(building);
     }
 
-    public void OnAuthorityBuildingDisposed(Building building)
+    private void OnAuthorityBuildingDisposed(Building building)
     {
         _buildingsRepository.MyBuildings.Remove(building);
     }
